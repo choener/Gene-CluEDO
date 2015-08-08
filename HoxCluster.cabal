@@ -1,8 +1,9 @@
 name:           HoxCluster
 version:        0.0.0.1
-author:         Christian Hoener zu Siederdissen, 2014
-copyright:      Christian Hoener zu Siederdissen, 2014
-homepage:       http://www.tbi.univie.ac.at/~choener/
+author:         Christian Hoener zu Siederdissen, 2014 - 2015
+copyright:      Christian Hoener zu Siederdissen, 2014 - 2015
+homepage:       https://github.com/choener/HoxCluster
+bug-reports:    https://github.com/choener/HoxCluster/issues
 maintainer:     choener@tbi.univie.ac.at
 category:       Bioinformatics
 license:        BSD3
@@ -17,16 +18,7 @@ description:
                 .
                 Apart from being an interesting problem in computational
                 biology, it also serves as an example problem for dynamic
-                programming over unordered sets. The theory and this
-                application is described in this paper:
-                .
-                @
-                Christian Hoener zu Siederdissen, Sonja J. Prohaska, and Peter F. Stadler
-                Dynamic Programming for Set Data Types
-                submitted
-                @
-                <<http://www.tbi.univie.ac.at/~choener/setgram/>>
-                .
+                programming over unordered sets.
 
 
 
@@ -34,35 +26,40 @@ Extra-Source-Files:
   README.md
   changelog.md
 
+
+
 library
-  build-depends:
-    ADPfusion         == 0.3.*    ,
-    FormalGrammars    == 0.1.*    ,
-    HamiltonianPaths  == 0.0.*    ,
-    template-haskell              ,
-    base              == 4.*
+  build-depends: base             >= 4.7    && < 4.9
+               , ADPfusion        >= 0.4.1  && < 0.4.2
+               , FormalGrammars   >= 0.2.1  && < 0.2.2
+               , PrimitiveArray   >= 0.6.1  && < 0.6.2
+--               , HamiltonianPaths  == 0.0.*
   exposed-modules:
     BioInf.HoxCluster
+  default-extensions: BangPatterns
+                    , TemplateHaskell
+                    , QuasiQuotes
+  default-language:
+    Haskell2010
   ghc-options:
     -O2 -funbox-strict-fields
 
+
+
 executable HoxCluster
-  build-depends:
-    ADPfusion         ,
-    base
+  build-depends: base
+               , ADPfusion
   hs-source-dirs:
     src
+  default-extensions: BangPatterns
   main-is:
     HoxCluster.hs
+  default-language:
+    Haskell2010
   ghc-options:
     -O2
-    -fcpr-off
-    -funbox-strict-fields
-    -funfolding-use-threshold1000
-    -funfolding-keeness-factor1000
-    -fllvm
-    -optlo-O3 -optlo-std-compile-opts
-    -fllvm-tbaa
+
+
 
 source-repository head
   type: git

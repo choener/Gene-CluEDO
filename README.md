@@ -1,12 +1,15 @@
+[![Build Status](https://travis-ci.org/choener/HoxCluster.svg?branch=master)](https://travis-ci.org/choener/HoxCluster)
 
-HoxCluster
-(c) 2014, Christian Hoener zu Siederdissen
-University of Vienna, Vienna, Austria
-choener@tbi.univie.ac.at
-LICENSE: BSD3
+# HoxCluster: determine the most likely Hox cluster ordering.
 
+[*generalized Algebraic Dynamic Programming Homepage*](http://www.bioinf.uni-leipzig.de/Software/gADP/)
 
 
-Introduction
-============
+
+#### Contact
+
+Christian Hoener zu Siederdissen  
+Leipzig University, Leipzig, Germany  
+choener@bioinf.uni-leipzig.de  
+http://www.bioinf.uni-leipzig.de/~choener/  
 

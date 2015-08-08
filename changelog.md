@@ -2,3 +2,4 @@
 -------
 
 - initial checkin
+- travis-ci integration
