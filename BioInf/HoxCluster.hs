@@ -15,8 +15,8 @@ T: s
 T: b
 T: i
 S: X
-X -> mpty <<<     X e
-X -> node <<<     X s
+X -> mpty <<< e
+X -> node <<< s
 X -> edge <<< b i X
 //
 |]
