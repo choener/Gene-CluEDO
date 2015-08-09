@@ -12,12 +12,11 @@ Verbose
 Grammar: Hox
 N: X
 T: s
-T: b
-T: i
+T: k
 S: X
-X -> mpty <<< e
-X -> node <<< s
-X -> edge <<< b i X
+X -> mpty <<< e     -- empty set
+X -> node <<< s     -- single node
+X -> edge <<< k X   -- edge k
 //
 |]
 

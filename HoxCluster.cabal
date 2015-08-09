@@ -10,7 +10,7 @@ license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
 stability:      experimental
-cabal-version:  >= 1.8.0
+cabal-version:  >= 1.10.0
 synopsis:
                 Hox gene clustering
 description:
@@ -18,7 +18,7 @@ description:
                 .
                 Apart from being an interesting problem in computational
                 biology, it also serves as an example problem for dynamic
-                programming over unordered sets.
+                programming over unordered sets with interfaces.
 
 
 
@@ -30,12 +30,12 @@ Extra-Source-Files:
 
 library
   build-depends: base             >= 4.7    && < 4.9
-               , ADPfusion        >= 0.4.1  && < 0.4.2
+               , ADPfusion        >= 0.4.2  && < 0.4.3
                , FormalGrammars   >= 0.2.1  && < 0.2.2
                , PrimitiveArray   >= 0.6.1  && < 0.6.2
---               , HamiltonianPaths  == 0.0.*
   exposed-modules:
     BioInf.HoxCluster
+    BioInf.HoxCluster.ScoreMat
   default-extensions: BangPatterns
                     , TemplateHaskell
                     , QuasiQuotes
