@@ -20,8 +20,9 @@ in the Hamiltonian path, i.e. either the first or the last node.
 
 ## The Biological Problem We Solve
 
-Hox clusters are a set of genes that are linearly ordered. It is assumed that
-local duplications ...
+[Wikipedia on Hox clusters.](https://en.wikipedia.org/wiki/Hox_cluster)
+
+Hox clusters are a set of genes that are linearly ordered.
 
 ## Example matrix:
 
