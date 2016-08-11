@@ -30,9 +30,10 @@ Extra-Source-Files:
 
 library
   build-depends: base             >= 4.7    && < 4.9
-               , ADPfusion        >= 0.4.2  && < 0.4.3
-               , FormalGrammars   >= 0.2.1  && < 0.2.2
-               , PrimitiveArray   >= 0.6.1  && < 0.6.2
+               --
+               , ADPfusion        == 0.5.2.*
+               , FormalGrammars   == 0.3.1.*
+               , PrimitiveArray   == 0.7.1.*
   exposed-modules:
     BioInf.HoxCluster
     BioInf.HoxCluster.ScoreMat

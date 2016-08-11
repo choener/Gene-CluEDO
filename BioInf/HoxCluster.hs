@@ -1,7 +1,7 @@
 
 module BioInf.HoxCluster where
 
-import ADP.Fusion
+import ADP.Fusion.Core
 import Data.PrimitiveArray hiding (toList)
 import FormalLanguage
 
