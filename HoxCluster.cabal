@@ -11,6 +11,7 @@ license-file:   LICENSE
 build-type:     Simple
 stability:      experimental
 cabal-version:  >= 1.10.0
+tested-with:    GHC == 7.8.4, GHC == 7.10.3, GHC == 8.0.1
 synopsis:
                 Hox gene clustering
 description:
@@ -29,7 +30,7 @@ Extra-Source-Files:
 
 
 library
-  build-depends: base             >= 4.7    && < 4.9
+  build-depends: base             >= 4.7    &&  < 5.0
                --
                , ADPfusion        == 0.5.2.*
                , FormalGrammars   == 0.3.1.*
@@ -38,8 +39,8 @@ library
     BioInf.HoxCluster
     BioInf.HoxCluster.ScoreMat
   default-extensions: BangPatterns
-                    , TemplateHaskell
                     , QuasiQuotes
+                    , TemplateHaskell
   default-language:
     Haskell2010
   ghc-options:
@@ -49,7 +50,9 @@ library
 
 executable HoxCluster
   build-depends: base
+               --
                , ADPfusion
+               , HoxCluster
   hs-source-dirs:
     src
   default-extensions: BangPatterns
@@ -60,6 +63,37 @@ executable HoxCluster
   ghc-options:
     -O2
 
+
+
+test-suite properties
+  type:
+    exitcode-stdio-1.0
+  main-is:
+    properties.hs
+  ghc-options:
+    -threaded -rtsopts -with-rtsopts=-N
+  hs-source-dirs:
+    tests
+  default-language:
+    Haskell2010
+  default-extensions: BangPatterns
+                    , CPP
+                    , FlexibleContexts
+                    , FlexibleInstances
+                    , MultiParamTypeClasses
+                    , ScopedTypeVariables
+                    , TemplateHaskell
+                    , TypeFamilies
+                    , TypeOperators
+                    , TypeSynonymInstances
+  build-depends: base
+               , QuickCheck
+               , tasty                        >= 0.11
+               , tasty-quickcheck             >= 0.8
+               , tasty-th                     >= 0.1
+               , vector
+               --
+               , HoxCluster
 
 
 source-repository head
