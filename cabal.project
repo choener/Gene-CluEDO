@@ -1,7 +1,8 @@
 packages: .
-          ../Lib-PrimitiveArray
-          ../Lib-OrderedBits
-          ../Lib-DPutils
           ../Lib-ADPfusion
           ../Lib-ADPfusionSet
+          ../Lib-DPutils
+          ../Lib-FormalGrammars
+          ../Lib-OrderedBits
+          ../Lib-PrimitiveArray
 
