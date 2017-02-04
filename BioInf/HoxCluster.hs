@@ -117,7 +117,7 @@ type U   x = TwITbl Id Unboxed EmptyOk (Unit I)      x
 forwardMinDist1 :: ScoreMat Double -> Z:.TS1 Double:.U Double
 forwardMinDist1 scoreMat =
   let n = numNodes scoreMat
-  in  mutateTablesDefault $ gHox (aMinDist scoreMat)
+  in  mutateTablesST $ gHox (aMinDist scoreMat)
         (ITbl 0 0 EmptyOk (fromAssocs (BS1 0 (-1)) (BS1 (2^n-1) (Boundary $ n-1)) (-999999) []))
         (ITbl 1 0 EmptyOk (fromAssocs Unit         Unit                           (-999999) []))
         Edge
