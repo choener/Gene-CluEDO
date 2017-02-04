@@ -1,12 +1,17 @@
 
 module BioInf.HoxCluster where
 
+import           Data.Text (Text)
+import qualified Data.Text as T
 import qualified Data.Vector.Fusion.Stream.Monadic as SM
 import           Numeric.Log
 
+import           ADP.Fusion.Set1
 import           ADP.Fusion.Core
 import           Data.PrimitiveArray hiding (toList)
 import           FormalLanguage
+
+import BioInf.HoxCluster.ScoreMat
 
 
 
@@ -44,50 +49,84 @@ T: s
 T: k
 S: X
 X -> mpty <<< ε     -- empty set
-X -> node <<< s X   -- single node
-X -> edge <<< k X   -- edge k
-//
-Outside: Xoh
-Source: Hox
+X -> node <<< s     -- single node
+X -> edge <<< X k   -- edge k
 //
 Emit: Hox
-Emit: Xoh
 |]
 
 
 
--- | maximal score algebra.
+-- | Minimal distance algebra
 --
 -- TODO The two Ints are the indices of the nodes and could be replaced?
 
-aMaxScore :: Monad m => SigHox m Double Double Int Int
-aMaxScore = SigHox
-  { hEdge = \edge x -> error "hEdge" + x
-  , hMpty = \() -> 0
-  , hNode = \node x -> error "hNode" + x
-  , hH    = SM.foldl' max (-999999)
+aMinDist :: Monad m => ScoreMat Double -> SigHox m Double Double (From:.To) Int
+aMinDist s = SigHox
+  { edge = \x e -> x + (s .!. e)
+  , mpty = \() -> 0
+  , node = \n -> error "hNode"
+  , h    = SM.foldl' max (-999999)
   }
-{-# Inline aMaxScore #-}
+{-# Inline aMinDist #-}
 
-aPretty :: Monad m => SigHox m String [String] Int Int
-aPretty = SigHox
-  { hEdge = \edge x -> show edge ++ "," ++ x
-  , hMpty = \()     -> ""
-  , hNode = \node x -> show node ++ x -- ok because it is the first node in the path
-  , hH    = SM.toList
+-- | This should give the correct order of nodes independent of the
+-- underlying @Set1 First@ or @Set1 Last@ because the @(From:.To)@ system
+-- is agnostic over these.
+--
+-- TODO Use text builder
+
+aPretty :: Monad m => ScoreMat t -> SigHox m Text [Text] (From:.To) Int
+aPretty s = SigHox
+  { edge = \x (From f:._) -> T.concat [s `nameOf` f , "," , x]
+  , mpty = \()  -> ""
+  , node = \n   -> s `nameOf` n -- ok because it is the first node in the path
+  , h    = SM.toList
   }
 {-# Inline aPretty #-}
 
-aInside :: Monad m => SigHox m (Log Double) (Log Double) Int Int
-aInside = SigHox
-  { hEdge = \edge x -> error "hEdge" * x
-  , hMpty = \() -> 1
-  , hNode = \node x -> error "hNode" * x
-  , hH    = SM.foldl' (+) 0
+-- | Before using @aInside@ the @ScoreMat@ needs to be scaled
+-- appropriately! Due to performance reasons we don't want to do this
+-- within @aInside@.
+
+aInside :: Monad m => ScoreMat (Log Double) -> SigHox m (Log Double) (Log Double) (From:.To) Int
+aInside s = SigHox
+  { edge = \x e -> s .!. e * x
+  , mpty = \() -> 1
+  , node = \n -> 1
+  , h    = SM.foldl' (+) 0
   }
 {-# Inline aInside #-}
 
 
+
+type TS1 x = TwITbl Id Unboxed EmptyOk (BS1 First I) x
+
+-- | Run the minimal distance algebra.
+--
+-- This produces one-boundary sets. Meaning that for each boundary we get
+-- the total distance within the set.
+
+runMinDist1 :: ScoreMat Double -> Z:.TS1 Double
+runMinDist1 scoreMat =
+  let n = numNodes scoreMat
+  in  mutateTablesDefault $ gHox (aMinDist scoreMat)
+        (ITbl 0 0 EmptyOk (fromAssocs (BS1 0 (-1)) (BS1 (2^n-1) (Boundary $ n-1)) (-999999) []))
+        Edge
+        Singleton
+{-# NoInline runMinDist1 #-}
+
+-- | Given the @Set1@ produced in @runMinDist1@ we can now extract the
+-- co-optimal paths using the @Set1 -> ()@ index change.
+--
+-- TODO do we want this one explicitly or make life easy and just extract
+-- from all @runMinDist1@ paths?
+
+runCoOptDist :: Z:.TS1 Double -> (Double,[[String]])
+runCoOptDist (Z:.ts1) = undefined
+{-# NoInline runCoOptDist #-}
+
+{-
 
 -- | Fill table for maximal scoring paths.
 
@@ -145,4 +184,6 @@ runStartProbabilities = undefined
 runEndProbabilities :: ()
 runEndProbabilities = undefined
 {-# NoInline runEndProbabilities #-}
+
+-}
 

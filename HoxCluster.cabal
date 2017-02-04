@@ -1,10 +1,10 @@
 name:           HoxCluster
 version:        0.0.0.1
-author:         Christian Hoener zu Siederdissen, 2014 - 2015
-copyright:      Christian Hoener zu Siederdissen, 2014 - 2015
+author:         Christian Hoener zu Siederdissen, 2017
+copyright:      Christian Hoener zu Siederdissen, 2017
 homepage:       https://github.com/choener/HoxCluster
 bug-reports:    https://github.com/choener/HoxCluster/issues
-maintainer:     choener@tbi.univie.ac.at
+maintainer:     choener@bioinf.uni-leipzig.de
 category:       Bioinformatics
 license:        BSD3
 license-file:   LICENSE
@@ -12,8 +12,7 @@ build-type:     Simple
 stability:      experimental
 cabal-version:  >= 1.10.0
 tested-with:    GHC == 7.8.4, GHC == 7.10.3, GHC == 8.0.1
-synopsis:
-                Hox gene clustering
+synopsis:       Hox gene clustering
 description:
                 Determine the most likely order of genes in a Hox cluster.
                 .
@@ -32,20 +31,24 @@ Extra-Source-Files:
 library
   build-depends: base             >= 4.7    &&  < 5.0
                , log-domain       >= 0.10
+               , text             >= 1.0
                , vector           >= 0.11
                --
                , ADPfusion        == 0.5.2.*
+               , ADPfusionSet     == 0.0.0.*
                , FormalGrammars   == 0.3.1.*
-               , PrimitiveArray   == 0.7.2.*
+               , PrimitiveArray   == 0.8.0.*
   exposed-modules:
     BioInf.HoxCluster
     BioInf.HoxCluster.ScoreMat
   default-extensions: BangPatterns
+                    , FlexibleContexts
                     , GADTs
+                    , OverloadedStrings
                     , QuasiQuotes
                     , TemplateHaskell
                     , TypeFamilies
-                    , FlexibleContexts
+                    , TypeOperators
   default-language:
     Haskell2010
   ghc-options:
@@ -56,7 +59,6 @@ library
 executable HoxCluster
   build-depends: base
                --
-               , ADPfusion
                , HoxCluster
   hs-source-dirs:
     src
