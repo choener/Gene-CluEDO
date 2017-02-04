@@ -8,6 +8,7 @@ import           Numeric.Log
 
 import           ADP.Fusion.Set1
 import           ADP.Fusion.Core
+import           ADP.Fusion.Unit
 import           Data.PrimitiveArray hiding (toList)
 import           FormalLanguage
 
@@ -45,12 +46,14 @@ import BioInf.HoxCluster.ScoreMat
 Verbose
 Grammar: Hox
 N: X
+N: Y
 T: s
 T: k
-S: X
+S: Y
 X -> mpty <<< ε     -- empty set
 X -> node <<< s     -- single node
 X -> edge <<< X k   -- edge k
+Y -> fini <<< X     -- extract just the co-optimal ones
 //
 Emit: Hox
 |]
@@ -65,7 +68,8 @@ aMinDist :: Monad m => ScoreMat Double -> SigHox m Double Double (From:.To) Int
 aMinDist s = SigHox
   { edge = \x e -> x + (s .!. e)
   , mpty = \() -> 0
-  , node = \n -> error "hNode"
+  , node = \n -> 0
+  , fini = id
   , h    = SM.foldl' max (-999999)
   }
 {-# Inline aMinDist #-}
@@ -81,6 +85,7 @@ aPretty s = SigHox
   { edge = \x (From f:._) -> T.concat [s `nameOf` f , "," , x]
   , mpty = \()  -> ""
   , node = \n   -> s `nameOf` n -- ok because it is the first node in the path
+  , fini = id
   , h    = SM.toList
   }
 {-# Inline aPretty #-}
@@ -94,6 +99,7 @@ aInside s = SigHox
   { edge = \x e -> s .!. e * x
   , mpty = \() -> 1
   , node = \n -> 1
+  , fini = id
   , h    = SM.foldl' (+) 0
   }
 {-# Inline aInside #-}
@@ -101,17 +107,19 @@ aInside s = SigHox
 
 
 type TS1 x = TwITbl Id Unboxed EmptyOk (BS1 First I) x
+type U   x = TwITbl Id Unboxed EmptyOk (Unit I)      x
 
 -- | Run the minimal distance algebra.
 --
 -- This produces one-boundary sets. Meaning that for each boundary we get
 -- the total distance within the set.
 
-forwardMinDist1 :: ScoreMat Double -> Z:.TS1 Double
+forwardMinDist1 :: ScoreMat Double -> Z:.TS1 Double:.U Double
 forwardMinDist1 scoreMat =
   let n = numNodes scoreMat
   in  mutateTablesDefault $ gHox (aMinDist scoreMat)
         (ITbl 0 0 EmptyOk (fromAssocs (BS1 0 (-1)) (BS1 (2^n-1) (Boundary $ n-1)) (-999999) []))
+        (ITbl 1 0 EmptyOk (fromAssocs Unit         Unit                           (-999999) []))
         Edge
         Singleton
 {-# NoInline forwardMinDist1 #-}
@@ -186,4 +194,11 @@ runEndProbabilities = undefined
 {-# NoInline runEndProbabilities #-}
 
 -}
+
+
+test fp = do
+  sMat <- fromFile fp
+  let Z:.md1:.fin = forwardMinDist1 sMat
+  let TW (ITbl _ _ _ itbl) _ = md1
+  print itbl
 
