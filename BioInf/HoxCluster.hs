@@ -107,20 +107,20 @@ type TS1 x = TwITbl Id Unboxed EmptyOk (BS1 First I) x
 -- This produces one-boundary sets. Meaning that for each boundary we get
 -- the total distance within the set.
 
-runMinDist1 :: ScoreMat Double -> Z:.TS1 Double
-runMinDist1 scoreMat =
+forwardMinDist1 :: ScoreMat Double -> Z:.TS1 Double
+forwardMinDist1 scoreMat =
   let n = numNodes scoreMat
   in  mutateTablesDefault $ gHox (aMinDist scoreMat)
         (ITbl 0 0 EmptyOk (fromAssocs (BS1 0 (-1)) (BS1 (2^n-1) (Boundary $ n-1)) (-999999) []))
         Edge
         Singleton
-{-# NoInline runMinDist1 #-}
+{-# NoInline forwardMinDist1 #-}
 
--- | Given the @Set1@ produced in @runMinDist1@ we can now extract the
+-- | Given the @Set1@ produced in @forwardMinDist1@ we can now extract the
 -- co-optimal paths using the @Set1 -> ()@ index change.
 --
 -- TODO do we want this one explicitly or make life easy and just extract
--- from all @runMinDist1@ paths?
+-- from all @forwardMinDist1@ paths?
 
 runCoOptDist :: Z:.TS1 Double -> (Double,[[String]])
 runCoOptDist (Z:.ts1) = undefined
