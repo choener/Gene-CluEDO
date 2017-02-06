@@ -5,6 +5,7 @@ import           Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Vector.Fusion.Stream.Monadic as SM
 import           Numeric.Log
+import           Data.List (nub,sort)
 
 import           ADP.Fusion.Set1
 import           ADP.Fusion.Core
@@ -58,6 +59,7 @@ Y -> fini <<< X     -- extract just the co-optimal ones
 Emit: Hox
 |]
 
+makeAlgebraProduct ''SigHox
 
 
 -- | Minimal distance algebra
@@ -82,7 +84,7 @@ aMinDist s = SigHox
 
 aPretty :: Monad m => ScoreMat t -> SigHox m Text [Text] (From:.To) Int
 aPretty s = SigHox
-  { edge = \x (From f:._) -> T.concat [s `nameOf` f , "," , x]
+  { edge = \x (From f:.To t) -> T.concat [s `nameOf` f, "->", s `nameOf` t , "   " , x]
   , mpty = \()  -> ""
   , node = \n   -> s `nameOf` n -- ok because it is the first node in the path
   , fini = id
@@ -109,6 +111,9 @@ aInside s = SigHox
 type TS1 x = TwITbl Id Unboxed EmptyOk (BS1 First I) x
 type U   x = TwITbl Id Unboxed EmptyOk (Unit I)      x
 
+type BT1 x b = TwITblBt Unboxed EmptyOk (BS1 First I) x Id Id b
+type BTU x b = TwITblBt Unboxed EmptyOk (Unit I)      x Id Id b
+
 -- | Run the minimal distance algebra.
 --
 -- This produces one-boundary sets. Meaning that for each boundary we get
@@ -124,14 +129,25 @@ forwardMinDist1 scoreMat =
         Singleton
 {-# NoInline forwardMinDist1 #-}
 
+backtrackMinDist1 :: ScoreMat Double -> Z:.TS1 Double:.U Double -> [Text]
+backtrackMinDist1 scoreMat (Z:.ts1:.u) = unId $ axiom b
+  where !(Z:.bt1:.b) = gHox (aMinDist scoreMat <|| aPretty scoreMat)
+                            (toBacktrack ts1 (undefined :: Id a -> Id a))
+                            (toBacktrack u   (undefined :: Id a -> Id a))
+                            Edge
+                            Singleton
+                        :: Z:.BT1 Double Text:.BTU Double Text
+
 -- | Given the @Set1@ produced in @forwardMinDist1@ we can now extract the
 -- co-optimal paths using the @Set1 -> ()@ index change.
 --
 -- TODO do we want this one explicitly or make life easy and just extract
 -- from all @forwardMinDist1@ paths?
 
-runCoOptDist :: Z:.TS1 Double -> (Double,[[String]])
-runCoOptDist (Z:.ts1) = undefined
+runCoOptDist :: ScoreMat Double -> (Double,[Text])
+runCoOptDist scoreMat = (unId $ axiom fwdu,bs)
+  where !(Z:.fwd1:.fwdu) = forwardMinDist1 scoreMat
+        bs = backtrackMinDist1 scoreMat (Z:.fwd1:.fwdu)
 {-# NoInline runCoOptDist #-}
 
 {-
@@ -198,7 +214,15 @@ runEndProbabilities = undefined
 
 test fp = do
   sMat <- fromFile fp
+  {-
   let Z:.md1:.fin = forwardMinDist1 sMat
-  let TW (ITbl _ _ _ itbl) _ = md1
-  print itbl
+  let TW (ITbl _ _ _ itbl1) _ = md1
+  let TW (ITbl _ _ _ itblu) _ = fin
+  print itblu
+  -}
+  let (d,bt) = runCoOptDist sMat
+  print d
+  mapM_ print $ bt
+  print $ length bt
+  print $ length $ nub $ sort bt
 
