@@ -6,6 +6,8 @@ import qualified Data.Text as T
 import qualified Data.Vector.Fusion.Stream.Monadic as SM
 import           Numeric.Log
 import           Data.List (nub,sort)
+import           Control.Monad (forM_)
+import           Text.Printf
 
 import           ADP.Fusion.Set1
 import           ADP.Fusion.Core
@@ -108,8 +110,9 @@ aInside s = SigHox
 
 
 
-type TS1 x = TwITbl Id Unboxed EmptyOk (BS1 First I) x
-type U   x = TwITbl Id Unboxed EmptyOk (Unit I)      x
+type TS1 x = TwITbl Id Unboxed EmptyOk (BS1 First I)      x
+type U   x = TwITbl Id Unboxed EmptyOk (Unit I)           x
+type PF  x = TwITbl Id Unboxed EmptyOk (Boundary First I) x
 
 type BT1 x b = TwITblBt Unboxed EmptyOk (BS1 First I) x Id Id b
 type BTU x b = TwITblBt Unboxed EmptyOk (Unit I)      x Id Id b
@@ -149,6 +152,19 @@ runCoOptDist scoreMat = (unId $ axiom fwdu,bs)
   where !(Z:.fwd1:.fwdu) = forwardMinDist1 scoreMat
         bs = backtrackMinDist1 scoreMat (Z:.fwd1:.fwdu)
 {-# NoInline runCoOptDist #-}
+
+-- | Extract the individual partition scores.
+
+partFun :: ScoreMat Double -> Z:.TS1 (Log Double):.PF (Log Double)
+partFun scoreMat =
+  let n       = numNodes scoreMat
+      partMat = toPartMatrix 100 scoreMat
+  in  mutateTablesST $ gHox (aInside partMat)
+        (ITbl 0 0 EmptyOk (fromAssocs (BS1 0 (-1)) (BS1 (2^n-1) (Boundary $ n-1)) (-999999) []))
+        (ITbl 1 0 EmptyOk (fromAssocs (Boundary 0) (Boundary $ n-1)               (-999999) []))
+        Edge
+        Singleton
+{-# NoInline partFun #-}
 
 {-
 
@@ -221,8 +237,14 @@ test fp = do
   print itblu
   -}
   let (d,bt) = runCoOptDist sMat
+  let Z:._:.TW (ITbl _ _ _ pf) _ = partFun sMat
+  let ps' = assocs pf
+  let pssum = Numeric.Log.sum $ Prelude.map snd ps'
+  let ps = Prelude.map (\(Boundary b,p) -> (b,p / pssum)) ps'
   print d
   mapM_ print $ bt
   print $ length bt
   print $ length $ nub $ sort bt
+  forM_ ps $ \(b,Exp p) -> printf "%s: %0.4f  " (sMat `nameOf` b) (exp p)
+  putStrLn ""
 
