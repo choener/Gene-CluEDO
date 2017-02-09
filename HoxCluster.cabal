@@ -40,6 +40,8 @@ library
                , PrimitiveArray   == 0.8.0.*
   exposed-modules:
     BioInf.HoxCluster
+    BioInf.HoxCluster.MinDist
+    BioInf.HoxCluster.EdgeProb
     BioInf.HoxCluster.ScoreMat
   default-extensions: BangPatterns
                     , FlexibleContexts

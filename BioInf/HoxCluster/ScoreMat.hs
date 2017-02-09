@@ -61,7 +61,7 @@ toPartMatrix
   -> ScoreMat Double
   -> ScoreMat (Log Double)
 toPartMatrix t scoreMat@(ScoreMat mat names) = ScoreMat p names
-  where p = PA.map (\k -> Exp {- . log . exp -} $ negate k / r * t) mat
+  where p = PA.map (\k -> Exp {- . log . exp -} $ negate k / (r * t)) mat
         n = numNodes scoreMat
         d = Prelude.sum [ mat ! (Z:.i:.j) | i <- [0..n-1], j <- [i+1..n-1] ] / fromIntegral (n*(n-1))
         r = fromIntegral (n-1) * d
