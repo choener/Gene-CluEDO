@@ -29,15 +29,16 @@ Extra-Source-Files:
 
 
 library
-  build-depends: base             >= 4.7    &&  < 5.0
-               , log-domain       >= 0.10
-               , text             >= 1.0
-               , vector           >= 0.11
+  build-depends: base                   >= 4.7    &&  < 5.0
+               , log-domain             >= 0.10
+               , text                   >= 1.0
+               , vector                 >= 0.11
                --
-               , ADPfusion        == 0.5.2.*
-               , ADPfusionSet     == 0.0.0.*
-               , FormalGrammars   == 0.3.1.*
-               , PrimitiveArray   == 0.8.0.*
+               , ADPfusion              == 0.5.2.*
+               , ADPfusionSet           == 0.0.0.*
+               , FormalGrammars         == 0.3.1.*
+               , PrimitiveArray         == 0.8.0.*
+               , PrimitiveArray-Pretty  == 0.0.0.*
   exposed-modules:
     BioInf.HoxCluster
     BioInf.HoxCluster.MinDist

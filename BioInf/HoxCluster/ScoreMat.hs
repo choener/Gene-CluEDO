@@ -44,6 +44,9 @@ numNodes :: Unbox t => ScoreMat t -> Int
 numNodes (ScoreMat mat _) = let ((Z:.0:.0),(Z:.n':._)) = bounds mat in n' + 1
 {-# Inline numNodes #-}
 
+listOfNames :: ScoreMat t -> [Text]
+listOfNames (ScoreMat _ ns) = V.toList ns
+
 -- | Turns a @ScoreMat@ for distances into one scaled by "temperature" for
 -- Inside/Outside calculations. Each value is scaled by
 -- @\k -> exp $ negate k / r * t@ where

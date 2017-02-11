@@ -5,4 +5,5 @@ packages: .
           ../Lib-FormalGrammars
           ../Lib-OrderedBits
           ../Lib-PrimitiveArray
+          ../Lib-PrimitiveArray-Pretty
 

@@ -4,7 +4,7 @@ module BioInf.HoxCluster.EdgeProb where
 import           Control.Arrow (second)
 import           Control.Monad (forM_)
 import           Data.List (nub,sort)
-import           Data.Text (Text)
+import           Data.Text (Text,unpack)
 import           Numeric.Log
 import qualified Data.Text as T
 import qualified Data.Vector.Fusion.Stream.Monadic as SM
@@ -14,6 +14,7 @@ import           ADP.Fusion.Core
 import           ADP.Fusion.EdgeBoundary
 import           ADP.Fusion.Set1
 import           Data.PrimitiveArray hiding (toList)
+import           Diagrams.TwoD.ProbabilityGrid
 import           FormalLanguage
 
 import           BioInf.HoxCluster.ScoreMat
@@ -158,6 +159,8 @@ partFun temperature scoreMat =
 
 test t fp = do
   sMat <- fromFile fp
+  let n = numNodes sMat
+  let lns = fmap unpack $ listOfNames sMat
 --  let (d,bt) = runCoOptDist sMat
   let ps = partFun t sMat
 --  print d
@@ -172,4 +175,13 @@ test t fp = do
   putStrLn ""
   let Exp z = Numeric.Log.sum $ Prelude.map snd ps
   printf "sum: %0.3f\n" $ exp z
+  forM_ ps $ \(_,Exp p) -> printf "%0.3f  " (1 / (1 - p))
+  putStrLn ""
+  putStrLn ""
+  putStrLn ""
+  print n
+  print lns
+  print $ length ps
+  print ps
+  svgGridFile "test.svg" FWlog n n lns lns (Prelude.map snd ps)
 
