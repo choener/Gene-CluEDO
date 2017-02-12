@@ -137,8 +137,8 @@ runCoOptDist scoreMat = (unId $ axiom fwdu,bs)
 
 -- | Extract the individual partition scores.
 
-partFun :: Double -> ScoreMat Double -> [(Boundary First I,Log Double)]
-partFun temperature scoreMat =
+boundaryPartFun :: Double -> ScoreMat Double -> [(Boundary First I,Log Double)]
+boundaryPartFun temperature scoreMat =
   let n       = numNodes scoreMat
       partMat = toPartMatrix temperature scoreMat
       (Z:.sM:.bM) = mutateTablesST $ gMinDist (aInside partMat)
@@ -153,7 +153,7 @@ partFun temperature scoreMat =
       bs = Prelude.map (second (/pssum)) bs'
   in bs
 
-{-# NoInline partFun #-}
+{-# NoInline boundaryPartFun #-}
 
 -- | Run the maximal edge probability grammar.
 
@@ -192,7 +192,7 @@ runMaxEdgeProb scoreMat = (unId $ axiom fwdu,bs)
 test t fp = do
   sMat <- fromFile fp
   let (d,bt) = runCoOptDist sMat
-  let ps = partFun t sMat
+  let ps = boundaryPartFun t sMat
   print d
   mapM_ print $ bt
   print $ length bt

@@ -81,8 +81,8 @@ type BEB x b = TwITblBt Unboxed EmptyOk (EdgeBoundary I) x Id Id b
 
 -- | Extract the individual partition scores.
 
-partFun :: Double -> ScoreMat Double -> [(EdgeBoundary I, Log Double)]
-partFun temperature scoreMat =
+edgeProbPartFun :: Double -> ScoreMat Double -> [(EdgeBoundary I, Log Double)]
+edgeProbPartFun temperature scoreMat =
   let n       = numNodes scoreMat
       partMat = toPartMatrix temperature scoreMat
       (Z:.sF:.sL:.sZ) = mutateTablesST $ gEdgeProb (aInside partMat)
@@ -97,7 +97,7 @@ partFun temperature scoreMat =
       pssum = (Numeric.Log.sum $ Prelude.map snd bs') / (fromIntegral n - 1)
       bs = Prelude.map (second (/pssum)) bs'
   in bs
-{-# NoInline partFun #-}
+{-# NoInline edgeProbPartFun #-}
 
 -- | Turn the edge probabilities into a score matrix.
 
@@ -112,7 +112,7 @@ test t fp = do
   let n = numNodes sMat
   let lns = fmap unpack $ listOfNames sMat
 --  let (d,bt) = runCoOptDist sMat
-  let ps = partFun t sMat
+  let ps = edgeProbPartFun t sMat
 --  print d
 --  mapM_ print $ bt
 --  print $ length bt
