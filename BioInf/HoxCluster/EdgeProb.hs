@@ -152,7 +152,7 @@ partFun temperature scoreMat =
                         :: Z:.TF1 (Log Double):.TL1 (Log Double):.EB (Log Double)
       TW (ITbl _ _ _ pf) _ = sZ
       bs' = assocs pf
-      pssum = Numeric.Log.sum $ Prelude.map snd bs'
+      pssum = (Numeric.Log.sum $ Prelude.map snd bs') / (fromIntegral n - 1)
       bs = Prelude.map (second (/pssum)) bs'
   in bs
 {-# NoInline partFun #-}
@@ -183,5 +183,5 @@ test t fp = do
   print lns
   print $ length ps
   print ps
-  svgGridFile "test.svg" FWlog n n lns lns (Prelude.map snd ps)
+  svgGridFile "test.svg" FWlinear n n lns lns (Prelude.map snd ps)
 
