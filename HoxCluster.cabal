@@ -64,11 +64,15 @@ library
 
 executable HoxCluster
   build-depends: base
+               , cmdargs      >= 0.10
+               , filepath
                --
                , HoxCluster
   hs-source-dirs:
     src
   default-extensions: BangPatterns
+                    , DeriveDataTypeable
+                    , RecordWildCards
   main-is:
     HoxCluster.hs
   default-language:

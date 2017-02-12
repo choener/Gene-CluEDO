@@ -202,4 +202,3 @@ test t fp = do
   forM_ ps $ \(_,Exp p) -> printf "%0.3f  " (exp p)
   putStrLn ""
 
-

@@ -25,14 +25,14 @@
 module BioInf.HoxCluster where
 
 import           Control.Monad (forM_)
+import           Data.Function (on)
+import           Data.List (groupBy)
+import           Numeric.Log
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
-import           Text.Printf
-import           System.IO (withFile,IOMode(WriteMode))
 import           System.FilePath (addExtension)
-import           Numeric.Log
-import           Data.List (groupBy)
-import           Data.Function (on)
+import           System.IO (withFile,IOMode(WriteMode))
+import           Text.Printf
 
 import           Data.PrimitiveArray (fromEdgeBoundaryFst)
 import           Diagrams.TwoD.ProbabilityGrid
@@ -40,6 +40,8 @@ import           Diagrams.TwoD.ProbabilityGrid
 import           BioInf.HoxCluster.EdgeProb (edgeProbScoreMat, edgeProbPartFun)
 import           BioInf.HoxCluster.MinDist (runMaxEdgeProb, runCoOptDist, boundaryPartFun)
 import           BioInf.HoxCluster.ScoreMat
+
+
 
 runHoxCluster
   :: Double
@@ -57,34 +59,49 @@ runHoxCluster temperature inFile filePrefix = do
   let lns = map T.unpack lon
   let bcols = maximum $ map T.length $ lon
   withFile (filePrefix `addExtension` ".run") WriteMode $ \hrun -> do
+    hPrintf hrun ("Input File: %s\n") inFile
+    hPrintf hrun ("Temperature: %f\n") temperature
+    hPrintf hrun ("\n")
     let (minD, minDcoopts) = runCoOptDist scoreMat
     --
     -- Print the minimal distance and the co-optimal paths
     --
     hPrintf hrun "Minimal Distance: %6.3f\n" minD
+    hPrintf hrun "Optimal Paths:\n"
     forM_ minDcoopts (T.hPutStrLn hrun)
+    hPrintf hrun "\n"
     --
     -- end probabilities, both to the output file and create pretty file
     --
+    hPrintf hrun "Chain Begin/End Probabilities:\n"
     let bps = boundaryPartFun temperature scoreMat
-    forM_ lon $ hPrintf hrun ("%" ++ show (bcols + 2) ++ "s")
+    forM_ lon $ hPrintf hrun ("%" ++ show (bcols + 4) ++ "s")
     hPrintf hrun "\n"
-    svgGridFile (filePrefix `addExtension` "-boundary.svg") FWfill FSopaLin 1 n [] lns (Prelude.map snd bps)
+    forM_ bps $ \(_, Exp p) -> hPrintf hrun ("%" ++ show (bcols + 4) ++ ".4f") (exp p)
+    hPrintf hrun "\n"
+    hPrintf hrun "\n"
+    svgGridFile (filePrefix `addExtension` "boundary.svg") FWfill FSopaLin 1 n [] lns (Prelude.map snd bps)
     --
     -- edge probabilities, output file and pretty file
     --
+    hPrintf hrun "Edge Probabilities:\n"
     let eps = edgeProbPartFun temperature scoreMat
-    forM_ lon $ hPrintf hrun ("%" ++ show (bcols + 2) ++ "s")
+    hPrintf hrun ("%" ++ show (bcols + 4) ++ "s") ("" :: String)
+    forM_ lon $ hPrintf hrun ("%" ++ show (bcols + 4) ++ "s")
+    hPrintf hrun "\n"
     forM_ (groupBy ((==) `on` (fromEdgeBoundaryFst . fst)) eps) $ \rps -> do
       let (eb,_) = head rps
-      hPrintf hrun ("%" ++ show (bcols + 2) ++ "s") (lon !! fromEdgeBoundaryFst eb)
-      forM_ rps $ \(eb,Exp p) -> hPrintf hrun ("%" ++ show (bcols + 2) ++ ".4f") (exp p)
-    svgGridFile (filePrefix `addExtension` "-edge.svg") FWfill FSopaLin n n lns lns (Prelude.map snd eps)
+      hPrintf hrun ("%" ++ show (bcols + 4) ++ "s") (lon !! fromEdgeBoundaryFst eb)
+      forM_ rps $ \(eb,Exp p) -> hPrintf hrun ("%" ++ show (bcols + 4) ++ ".4f") (exp p)
+      hPrintf hrun "\n"
+    svgGridFile (filePrefix `addExtension` "edge.svg") FWfill FSopaLin n n lns lns (Prelude.map snd eps)
     --
     -- maximum probability path
     --
+    hPrintf hrun "\n"
     let probMat = edgeProbScoreMat scoreMat eps
     let (Exp maxP, maxPcoopts) = runMaxEdgeProb probMat
     hPrintf hrun "Maximal Log-Probability Path Score: %6.3f\n" maxP
     forM_ maxPcoopts (T.hPutStrLn hrun)
+    hPrintf hrun "\n"
 

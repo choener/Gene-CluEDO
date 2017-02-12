@@ -19,6 +19,7 @@ import           Data.PrimitiveArray hiding (map)
 import qualified Data.PrimitiveArray as PA
 
 
+
 -- | NxN sized score matrices
 --
 -- TODO needs a vector with the column names!
