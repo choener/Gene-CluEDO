@@ -24,62 +24,18 @@ import           ADP.Fusion.Set1
 import           ADP.Fusion.Unit
 import           Data.PrimitiveArray hiding (toList)
 import           FormalLanguage
+import           ShortestPath.SHP.MinDist
 
 import           BioInf.HoxCluster.ScoreMat
 
-
-
--- A small grammar for Hamiltonian path problems. We need three rules due
--- to normalization requirements for Inside-Outside.
---
--- Now, not a single node is set.
---
--- @
--- X -> mpty <<< e
--- @
---
--- A single node may be inserted, if the remainder of the set is then
--- empty. This means that the @s@ terminal checks that only sets of size
--- one are looked at.
---
--- @
--- X -> node <<< s X
--- @
---
--- An edge @k@ can be inserted, if at least one element in the set is still
--- empty, and the set already contains at least one element.
---
--- @
--- X -> edge <<< k X
--- @
---
--- TODO generalize to be SHP and move into shortest path problem library
-
-[formalLanguage|
-Verbose
-Grammar: Hox
-N: X
-N: Y
-T: s
-T: k
-S: Y
-X -> mpty <<< ε     -- empty set
-X -> node <<< s     -- single node
-X -> edge <<< X k   -- edge k
-Y -> fini <<< X     -- extract just the co-optimal ones
-//
-Emit: Hox
-|]
-
-makeAlgebraProduct ''SigHox
 
 
 -- | Minimal distance algebra
 --
 -- TODO The two Ints are the indices of the nodes and could be replaced?
 
-aMinDist :: Monad m => ScoreMat Double -> SigHox m Double Double (From:.To) Int
-aMinDist s = SigHox
+aMinDist :: Monad m => ScoreMat Double -> SigMinDist m Double Double (From:.To) Int
+aMinDist s = SigMinDist
   { edge = \x e -> x + (s .!. e)
   , mpty = \() -> 0
   , node = \n -> 0
@@ -88,14 +44,27 @@ aMinDist s = SigHox
   }
 {-# Inline aMinDist #-}
 
+-- | Maximum edge probability following the probabilities generated from
+-- the @EdgeProb@ grammar.
+
+aMaxEdgeProb :: Monad m => ScoreMat (Log Double) -> SigMinDist m (Log Double) (Log Double) (From:.To) Int
+aMaxEdgeProb s = SigMinDist
+  { edge = \x e -> x * (s .!. e)
+  , mpty = \() -> 1
+  , node = \n -> 1
+  , fini = id
+  , h    = SM.foldl' max 0
+  }
+{-# Inline aMaxEdgeProb #-}
+
 -- | This should give the correct order of nodes independent of the
 -- underlying @Set1 First@ or @Set1 Last@ because the @(From:.To)@ system
 -- is agnostic over these.
 --
 -- TODO Use text builder
 
-aPretty :: Monad m => ScoreMat t -> SigHox m Text [Text] (From:.To) Int
-aPretty s = SigHox
+aPretty :: Monad m => ScoreMat t -> SigMinDist m Text [Text] (From:.To) Int
+aPretty s = SigMinDist
   { edge = \x (From f:.To t) -> T.concat [s `nameOf` f, " -> ", x]
   , mpty = \()  -> ""
   , node = \n   -> s `nameOf` n -- ok because it is the first node in the path
@@ -108,8 +77,8 @@ aPretty s = SigHox
 -- appropriately! Due to performance reasons we don't want to do this
 -- within @aInside@.
 
-aInside :: Monad m => ScoreMat (Log Double) -> SigHox m (Log Double) (Log Double) (From:.To) Int
-aInside s = SigHox
+aInside :: Monad m => ScoreMat (Log Double) -> SigMinDist m (Log Double) (Log Double) (From:.To) Int
+aInside s = SigMinDist
   { edge = \x e -> s .!. e * x
   , mpty = \() -> 1
   , node = \n -> 1
@@ -127,6 +96,8 @@ type PF  x = TwITbl Id Unboxed EmptyOk (Boundary First I) x
 type BT1 x b = TwITblBt Unboxed EmptyOk (BS1 First I) x Id Id b
 type BTU x b = TwITblBt Unboxed EmptyOk (Unit I)      x Id Id b
 
+
+
 -- | Run the minimal distance algebra.
 --
 -- This produces one-boundary sets. Meaning that for each boundary we get
@@ -135,7 +106,7 @@ type BTU x b = TwITblBt Unboxed EmptyOk (Unit I)      x Id Id b
 forwardMinDist1 :: ScoreMat Double -> Z:.TS1 Double:.U Double
 forwardMinDist1 scoreMat =
   let n = numNodes scoreMat
-  in  mutateTablesST $ gHox (aMinDist scoreMat)
+  in  mutateTablesST $ gMinDist (aMinDist scoreMat)
         (ITbl 0 0 EmptyOk (fromAssocs (BS1 0 (-1)) (BS1 (2^n-1) (Boundary $ n-1)) (-999999) []))
         (ITbl 1 0 EmptyOk (fromAssocs Unit         Unit                           (-999999) []))
         Edge
@@ -144,7 +115,7 @@ forwardMinDist1 scoreMat =
 
 backtrackMinDist1 :: ScoreMat Double -> Z:.TS1 Double:.U Double -> [Text]
 backtrackMinDist1 scoreMat (Z:.ts1:.u) = unId $ axiom b
-  where !(Z:.bt1:.b) = gHox (aMinDist scoreMat <|| aPretty scoreMat)
+  where !(Z:.bt1:.b) = gMinDist (aMinDist scoreMat <|| aPretty scoreMat)
                             (toBacktrack ts1 (undefined :: Id a -> Id a))
                             (toBacktrack u   (undefined :: Id a -> Id a))
                             Edge
@@ -170,7 +141,7 @@ partFun :: Double -> ScoreMat Double -> [(Boundary First I,Log Double)]
 partFun temperature scoreMat =
   let n       = numNodes scoreMat
       partMat = toPartMatrix temperature scoreMat
-      (Z:.sM:.bM) = mutateTablesST $ gHox (aInside partMat)
+      (Z:.sM:.bM) = mutateTablesST $ gMinDist (aInside partMat)
                       (ITbl 0 0 EmptyOk (fromAssocs (BS1 0 (-1)) (BS1 (2^n-1) (Boundary $ n-1)) (-999999) []))
                       (ITbl 1 0 EmptyOk (fromAssocs (Boundary 0) (Boundary $ n-1)               (-999999) []))
                       Edge
@@ -183,6 +154,40 @@ partFun temperature scoreMat =
   in bs
 
 {-# NoInline partFun #-}
+
+-- | Run the maximal edge probability grammar.
+
+forwardMaxEdgeProb :: ScoreMat (Log Double) -> Z:.TS1 (Log Double):.U (Log Double)
+forwardMaxEdgeProb scoreMat =
+  let n = numNodes scoreMat
+  in  mutateTablesST $ gMinDist (aMaxEdgeProb scoreMat)
+        (ITbl 0 0 EmptyOk (fromAssocs (BS1 0 (-1)) (BS1 (2^n-1) (Boundary $ n-1)) 0 []))
+        (ITbl 1 0 EmptyOk (fromAssocs Unit         Unit                           0 []))
+        Edge
+        Singleton
+{-# NoInline forwardMaxEdgeProb #-}
+
+backtrackMaxEdgeProb :: ScoreMat (Log Double) -> Z:.TS1 (Log Double):.U (Log Double) -> [Text]
+backtrackMaxEdgeProb scoreMat (Z:.ts1:.u) = unId $ axiom b
+  where !(Z:.bt1:.b) = gMinDist (aMaxEdgeProb scoreMat <|| aPretty scoreMat)
+                            (toBacktrack ts1 (undefined :: Id a -> Id a))
+                            (toBacktrack u   (undefined :: Id a -> Id a))
+                            Edge
+                            Singleton
+                        :: Z:.BT1 (Log Double) Text:.BTU (Log Double) Text
+{-# NoInline backtrackMaxEdgeProb #-}
+
+-- | Given the @Set1@ produced in @forwardMinDist1@ we can now extract the
+-- co-optimal paths using the @Set1 -> ()@ index change.
+--
+-- TODO do we want this one explicitly or make life easy and just extract
+-- from all @forwardMinDist1@ paths?
+
+runMaxEdgeProb :: ScoreMat (Log Double) -> (Log Double,[Text])
+runMaxEdgeProb scoreMat = (unId $ axiom fwdu,bs)
+  where !(Z:.fwd1:.fwdu) = forwardMaxEdgeProb scoreMat
+        bs = backtrackMaxEdgeProb scoreMat (Z:.fwd1:.fwdu)
+{-# NoInline runMaxEdgeProb #-}
 
 test t fp = do
   sMat <- fromFile fp

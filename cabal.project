@@ -6,4 +6,5 @@ packages: .
           ../Lib-OrderedBits
           ../Lib-PrimitiveArray
           ../Lib-PrimitiveArray-Pretty
+          ../Lib-ShortestPathProblems
 

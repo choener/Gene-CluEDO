@@ -39,6 +39,7 @@ library
                , FormalGrammars         == 0.3.1.*
                , PrimitiveArray         == 0.8.0.*
                , PrimitiveArray-Pretty  == 0.0.0.*
+               , ShortestPathProblems   == 0.0.0.*
   exposed-modules:
     BioInf.HoxCluster
     BioInf.HoxCluster.MinDist
