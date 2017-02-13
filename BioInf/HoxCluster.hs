@@ -22,7 +22,11 @@
 -- TODO All this should be wrapped and available as a function. not just
 -- providing output files.
 
-module BioInf.HoxCluster where
+module BioInf.HoxCluster
+  ( runHoxCluster
+  , FillWeight (..)
+  , FillStyle (..)
+  ) where
 
 import           Control.Monad (forM_)
 import           Data.Function (on)
@@ -44,7 +48,9 @@ import           BioInf.HoxCluster.ScoreMat
 
 
 runHoxCluster
-  :: Double
+  :: FillWeight
+  -> FillStyle
+  -> Double
   -- ^ "Temperature" for probability-related parts of the algorithms.
   -- Lower temperatures favor a single path.
   -> FilePath
@@ -52,7 +58,7 @@ runHoxCluster
   -> String
   -- ^ In the current directory, create output files with this name prefix
   -> IO ()
-runHoxCluster temperature inFile filePrefix = do
+runHoxCluster fw fs temperature inFile filePrefix = do
   scoreMat <- fromFile inFile
   let lon = listOfNames scoreMat
   let n = length lon
@@ -80,7 +86,7 @@ runHoxCluster temperature inFile filePrefix = do
     forM_ bps $ \(_, Exp p) -> hPrintf hrun ("%" ++ show (bcols + 4) ++ ".4f") (exp p)
     hPrintf hrun "\n"
     hPrintf hrun "\n"
-    svgGridFile (filePrefix `addExtension` "boundary.svg") FWfill FSopaLin 1 n [] lns (Prelude.map snd bps)
+    svgGridFile (filePrefix `addExtension` "boundary.svg") fw fs 1 n [] lns (Prelude.map snd bps)
     --
     -- edge probabilities, output file and pretty file
     --
@@ -94,7 +100,7 @@ runHoxCluster temperature inFile filePrefix = do
       hPrintf hrun ("%" ++ show (bcols + 4) ++ "s") (lon !! fromEdgeBoundaryFst eb)
       forM_ rps $ \(eb,Exp p) -> hPrintf hrun ("%" ++ show (bcols + 4) ++ ".4f") (exp p)
       hPrintf hrun "\n"
-    svgGridFile (filePrefix `addExtension` "edge.svg") FWfill FSopaLin n n lns lns (Prelude.map snd eps)
+    svgGridFile (filePrefix `addExtension` "edge.svg") fw fs n n lns lns (Prelude.map snd eps)
     --
     -- maximum probability path
     --

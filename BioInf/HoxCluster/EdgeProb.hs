@@ -107,6 +107,7 @@ edgeProbScoreMat (ScoreMat mat ns) xs' = ScoreMat m ns
         (l,h) = bounds mat
         xs = [ ((Z:.f:.t),p) | (f :-> t, p) <- xs' ]
 
+{-
 test t fp = do
   sMat <- fromFile fp
   let n = numNodes sMat
@@ -134,4 +135,5 @@ test t fp = do
   print $ length ps
   print ps
   svgGridFile "test.svg" FWfill FSopaLin n n lns lns (Prelude.map snd ps)
+-}
 

@@ -189,6 +189,7 @@ runMaxEdgeProb scoreMat = (unId $ axiom fwdu,bs)
         bs = backtrackMaxEdgeProb scoreMat (Z:.fwd1:.fwdu)
 {-# NoInline runMaxEdgeProb #-}
 
+{-
 test t fp = do
   sMat <- fromFile fp
   let (d,bt) = runCoOptDist sMat
@@ -201,4 +202,5 @@ test t fp = do
   putStrLn ""
   forM_ ps $ \(_,Exp p) -> printf "%0.3f  " (exp p)
   putStrLn ""
+-}
 
