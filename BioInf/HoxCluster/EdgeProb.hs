@@ -18,8 +18,9 @@ import           Data.PrimitiveArray hiding (toList)
 import           Diagrams.TwoD.ProbabilityGrid
 import           FormalLanguage
 import           ShortestPath.SHP.Grammar.EdgeProb
+import           Data.PrimitiveArray.ScoreMatrix
 
-import           BioInf.HoxCluster.ScoreMat
+--import           BioInf.HoxCluster.ScoreMat
 
 
 
@@ -27,23 +28,24 @@ import           BioInf.HoxCluster.ScoreMat
 --
 -- TODO The two Ints are the indices of the nodes and could be replaced?
 
-aMinDist :: Monad m => ScoreMat Double -> SigEdgeProb m Double Double (From:.To) Int
+aMinDist :: Monad m => ScoreMatrix Double -> SigEdgeProb m Double Double (From:.To) (Int:.To)
 aMinDist s = SigEdgeProb
-  { edge = \x e -> x + (s .!. e)
+  { edge = \x (From ff:.To tt) -> x + (s .!. (ff,tt))
   , mpty = \() -> 0
   , node = \n -> 0
-  , fini = \l e f -> l + (s .!. e) + f
+  , fini = \l (From ff:.To tt) f -> l + (s .!. (ff,tt)) + f
   , h    = SM.foldl' min 999999
   }
 {-# Inline aMinDist #-}
 
+{-
 -- | This should give the correct order of nodes independent of the
 -- underlying @Set1 First@ or @Set1 Last@ because the @(From:.To)@ system
 -- is agnostic over these.
 --
 -- TODO Use text builder
 
-aPretty :: Monad m => ScoreMat t -> SigEdgeProb m Text [Text] (From:.To) Int
+aPretty :: Monad m => ScoreMatrix t -> SigEdgeProb m Text [Text] (From:.To) (Int:.To)
 aPretty s = SigEdgeProb
   { edge = \x (From f:.To t) -> T.concat [s `nameOf` f, " -> ", x]
   , mpty = \()  -> ""
@@ -52,17 +54,18 @@ aPretty s = SigEdgeProb
   , h    = SM.toList
   }
 {-# Inline aPretty #-}
+-}
 
--- | Before using @aInside@ the @ScoreMat@ needs to be scaled
+-- | Before using @aInside@ the @ScoreMatrix@ needs to be scaled
 -- appropriately! Due to performance reasons we don't want to do this
 -- within @aInside@.
 
-aInside :: Monad m => ScoreMat (Log Double) -> SigEdgeProb m (Log Double) (Log Double) (From:.To) Int
+aInside :: Monad m => ScoreMatrix (Log Double) -> SigEdgeProb m (Log Double) (Log Double) (From:.To) (Int:.To)
 aInside s = SigEdgeProb
-  { edge = \x e -> s .!. e * x
+  { edge = \x (From ff:.To tt) -> s .!. (ff,tt) * x
   , mpty = \() -> 1
   , node = \n -> 1
-  , fini = \l e f -> l * (s .!. e) * f
+  , fini = \l (From ff:.To tt) f -> l * (s .!. (ff,tt)) * f
   , h    = SM.foldl' (+) 0
   }
 {-# Inline aInside #-}
@@ -81,9 +84,9 @@ type BEB x b = TwITblBt Unboxed EmptyOk (EdgeBoundary I) x Id Id b
 
 -- | Extract the individual partition scores.
 
-edgeProbPartFun :: Double -> ScoreMat Double -> [(EdgeBoundary I, Log Double)]
+edgeProbPartFun :: Double -> ScoreMatrix Double -> [(EdgeBoundary I, Log Double)]
 edgeProbPartFun temperature scoreMat =
-  let n       = numNodes scoreMat
+  let n       = numRows scoreMat
       partMat = toPartMatrix temperature scoreMat
       (Z:.sF:.sL:.sZ) = mutateTablesST $ gEdgeProb (aInside partMat)
                           (ITbl 0 0 EmptyOk (fromAssocs (BS1 0 (-1)) (BS1 (2^n-1) (Boundary $ n-1)) 0 []))
@@ -101,26 +104,25 @@ edgeProbPartFun temperature scoreMat =
 
 -- | Turn the edge probabilities into a score matrix.
 
-edgeProbScoreMat :: (Unbox t) => ScoreMat t -> [(EdgeBoundary I, Log Double)] -> ScoreMat (Log Double)
-edgeProbScoreMat (ScoreMat mat ns) xs' = ScoreMat m ns
+edgeProbScoreMatrix :: (Unbox t) => ScoreMatrix t -> [(EdgeBoundary I, Log Double)] -> ScoreMatrix (Log Double)
+edgeProbScoreMatrix (ScoreMatrix mat zn sn) xs' = ScoreMatrix m zn sn
   where m = fromAssocs l h 0 xs
         (l,h) = bounds mat
         xs = [ ((Z:.f:.t),p) | (f :-> t, p) <- xs' ]
 
-{-
 test t fp = do
   sMat <- fromFile fp
-  let n = numNodes sMat
-  let lns = fmap unpack $ listOfNames sMat
+  let n = numRows sMat
+  let lns = fmap unpack $ listOfRowNames sMat
 --  let (d,bt) = runCoOptDist sMat
   let ps = edgeProbPartFun t sMat
 --  print d
 --  mapM_ print $ bt
 --  print $ length bt
 --  print $ length $ nub $ sort bt
-  forM_ ps $ \(b :-> _,_) -> printf "%5s  " (sMat `nameOf` b)
+  forM_ ps $ \(b :-> _,_) -> printf "%5s  " (sMat `rowNameOf` b)
   putStrLn ""
-  forM_ ps $ \(_ :-> b,_) -> printf "%5s  " (sMat `nameOf` b)
+  forM_ ps $ \(_ :-> b,_) -> printf "%5s  " (sMat `rowNameOf` b)
   putStrLn ""
   forM_ ps $ \(_,Exp p) -> printf "%0.3f  " (exp p)
   putStrLn ""
@@ -134,6 +136,5 @@ test t fp = do
   print lns
   print $ length ps
   print ps
-  svgGridFile "test.svg" FWfill FSopaLin n n lns lns (Prelude.map snd ps)
--}
+  svgGridFile "test.svg" FWfill FSopacityLinear n n lns lns (Prelude.map snd ps)
 

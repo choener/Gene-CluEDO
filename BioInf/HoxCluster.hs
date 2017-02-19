@@ -39,11 +39,13 @@ import           System.IO (withFile,IOMode(WriteMode))
 import           Text.Printf
 
 import           Data.PrimitiveArray (fromEdgeBoundaryFst)
+import           Data.PrimitiveArray.ScoreMatrix
 import           Diagrams.TwoD.ProbabilityGrid
+import           ShortestPath.SHP.Edge.MinDist (runMaxEdgeProb, runCoOptDist, boundaryPartFun)
 
-import           BioInf.HoxCluster.EdgeProb (edgeProbScoreMat, edgeProbPartFun)
-import           BioInf.HoxCluster.MinDist (runMaxEdgeProb, runCoOptDist, boundaryPartFun)
-import           BioInf.HoxCluster.ScoreMat
+import           BioInf.HoxCluster.EdgeProb (edgeProbScoreMatrix, edgeProbPartFun)
+--import           BioInf.HoxCluster.MinDist (runMaxEdgeProb, runCoOptDist, boundaryPartFun)
+--import           BioInf.HoxCluster.ScoreMat
 
 
 
@@ -60,7 +62,7 @@ runHoxCluster
   -> IO ()
 runHoxCluster fw fs temperature inFile filePrefix = do
   scoreMat <- fromFile inFile
-  let lon = listOfNames scoreMat
+  let lon = listOfRowNames scoreMat
   let n = length lon
   let lns = map T.unpack lon
   let bcols = maximum $ map T.length $ lon
@@ -105,7 +107,7 @@ runHoxCluster fw fs temperature inFile filePrefix = do
     -- maximum probability path
     --
     hPrintf hrun "\n"
-    let probMat = edgeProbScoreMat scoreMat eps
+    let probMat = edgeProbScoreMatrix scoreMat eps
     let (Exp maxP, maxPcoopts) = runMaxEdgeProb probMat
     hPrintf hrun "Maximal Log-Probability Path Score: %6.3f\n" maxP
     forM_ maxPcoopts (T.hPutStrLn hrun)

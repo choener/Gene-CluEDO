@@ -10,6 +10,8 @@
 
 module BioInf.HoxCluster.MinDist where
 
+{-
+
 import           Control.Arrow (second)
 import           Control.Monad (forM_)
 import           Data.List (nub,sort)
@@ -202,5 +204,7 @@ test t fp = do
   putStrLn ""
   forM_ ps $ \(_,Exp p) -> printf "%0.3f  " (exp p)
   putStrLn ""
+-}
+
 -}
 
