@@ -17,7 +17,7 @@ import           ADP.Fusion.Set1
 import           Data.PrimitiveArray hiding (toList)
 import           Diagrams.TwoD.ProbabilityGrid
 import           FormalLanguage
-import           ShortestPath.SHP.EdgeProb
+import           ShortestPath.SHP.Grammar.EdgeProb
 
 import           BioInf.HoxCluster.ScoreMat
 
