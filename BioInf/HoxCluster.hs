@@ -38,10 +38,11 @@ import           System.FilePath (addExtension)
 import           System.IO (withFile,IOMode(WriteMode))
 import           Text.Printf
 
-import           Data.PrimitiveArray (fromEdgeBoundaryFst)
+import           Data.PrimitiveArray (fromEdgeBoundaryFst,(:.)(..))
 import           Data.PrimitiveArray.ScoreMatrix
 import           Diagrams.TwoD.ProbabilityGrid
-import           ShortestPath.SHP.Edge.MinDist (runMaxEdgeProb, runCoOptDist, boundaryPartFun)
+import           ShortestPath.SHP.Edge.MinDist (runMaxEdgeProb, runCoOptDist, boundaryPartFun,PathBT(..))
+import           ADP.Fusion.Term.Edge.Type (From(..),To(..))
 
 import           BioInf.HoxCluster.EdgeProb (edgeProbScoreMatrix, edgeProbPartFun)
 --import           BioInf.HoxCluster.MinDist (runMaxEdgeProb, runCoOptDist, boundaryPartFun)
@@ -110,6 +111,10 @@ runHoxCluster fw fs temperature inFile filePrefix = do
     let probMat = edgeProbScoreMatrix scoreMat eps
     let (Exp maxP, maxPcoopts) = runMaxEdgeProb probMat
     hPrintf hrun "Maximal Log-Probability Path Score: %6.3f\n" maxP
-    forM_ maxPcoopts (T.hPutStrLn hrun)
+    forM_ maxPcoopts $ \path -> do
+      forM_ path $ \case
+        BTnode (_:.To n)    -> hPrintf hrun "%s\n" (lns !! n)
+        BTedge (From ff:._) -> hPrintf hrun "%s -> " (lns !! ff)
+      hPrintf hrun "\n"
     hPrintf hrun "\n"
 

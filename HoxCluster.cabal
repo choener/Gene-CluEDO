@@ -49,6 +49,7 @@ library
   default-extensions: BangPatterns
                     , FlexibleContexts
                     , GADTs
+                    , LambdaCase
                     , MultiParamTypeClasses
                     , OverloadedStrings
                     , QuasiQuotes

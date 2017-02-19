@@ -105,8 +105,9 @@ edgeProbPartFun temperature scoreMat =
 -- | Turn the edge probabilities into a score matrix.
 
 edgeProbScoreMatrix :: (Unbox t) => ScoreMatrix t -> [(EdgeBoundary I, Log Double)] -> ScoreMatrix (Log Double)
-edgeProbScoreMatrix (ScoreMatrix mat zn sn) xs' = ScoreMatrix m zn sn
+edgeProbScoreMatrix (ScoreMatrix mat _ zn sn) xs' = ScoreMatrix m (fromAssocs 0 n 1 []) zn sn
   where m = fromAssocs l h 0 xs
+        (Z:._:.n) = h
         (l,h) = bounds mat
         xs = [ ((Z:.f:.t),p) | (f :-> t, p) <- xs' ]
 
