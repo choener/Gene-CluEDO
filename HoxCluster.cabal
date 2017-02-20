@@ -30,6 +30,7 @@ Extra-Source-Files:
 
 library
   build-depends: base                   >= 4.7    &&  < 5.0
+               , containers
                , filepath
                , log-domain             >= 0.10
                , text                   >= 1.0

@@ -10,6 +10,7 @@ import           Numeric.Log
 import qualified Data.Text as T
 import qualified Data.Vector.Fusion.Stream.Monadic as SM
 import           Text.Printf
+import qualified Data.Map.Strict as MS
 
 import           ADP.Fusion.Core
 import           ADP.Fusion.EdgeBoundary
@@ -105,11 +106,17 @@ edgeProbPartFun temperature scoreMat =
 -- | Turn the edge probabilities into a score matrix.
 
 edgeProbScoreMatrix :: (Unbox t) => ScoreMatrix t -> [(EdgeBoundary I, Log Double)] -> ScoreMatrix (Log Double)
-edgeProbScoreMatrix (ScoreMatrix mat _ zn sn) xs' = ScoreMatrix m (fromAssocs 0 n 1 []) zn sn
+edgeProbScoreMatrix (ScoreMatrix mat _ zn sn) xs' = ScoreMatrix m endProbs zn sn
   where m = fromAssocs l h 0 xs
         (Z:._:.n) = h
         (l,h) = bounds mat
         xs = [ ((Z:.f:.t),p) | (f :-> t, p) <- xs' ]
+        -- calculate end state probability
+        eP = MS.fromListWith (+) [ (f,p) | (f :-> t, p) <- xs' ]
+        endProbs = fromAssocs 0 n 1 [ (k, 1 - eP MS.! k) | k <- [0..n] ]
+        -- calculate begin state probability
+        bP = MS.fromListWith (+) [ (t,p) | (f :-> t, p) <- xs' ]
+        beginProbs = fromAssocs 0 n 1 [ (k, 1 - eP MS.! k) | k <- [0..n] ] `asTypeOf` endProbs
 
 test t fp = do
   sMat <- fromFile fp
