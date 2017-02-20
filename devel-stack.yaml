@@ -1,8 +1,10 @@
-resolver: lts-6.5
+resolver: lts-8.0
 
 packages:
 - '.'
 - location: ../Lib-PrimitiveArray
+  extra-dep: true
+- location: ../Lib-PrimitiveArray-Pretty
   extra-dep: true
 - location: ../Lib-OrderedBits
   extra-dep: true
@@ -12,9 +14,13 @@ packages:
   extra-dep: true
 - location: ../Lib-FormalGrammars
   extra-dep: true
+- location: ../Lib-ADPfusionSet
+  extra-dep: true
+- location: ../Lib-ShortestPathProblems
+  extra-dep: true
 
-extra-deps:
-- tuple-0.3.0.2
+#extra-deps:
+#- tuple-0.3.0.2
 
 flags: {}
 
