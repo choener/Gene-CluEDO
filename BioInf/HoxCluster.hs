@@ -66,7 +66,7 @@ runHoxCluster fw fs temperature inFile filePrefix = do
   let lon = listOfRowNames scoreMat
   let n = length lon
   let lns = map T.unpack lon
-  let bcols = maximum $ map T.length $ lon
+  let bcols = max 4 . maximum $ map T.length $ lon
   withFile (filePrefix `addExtension` ".run") WriteMode $ \hrun -> do
     hPrintf hrun ("Input File: %s\n") inFile
     hPrintf hrun ("Temperature: %f\n") temperature
