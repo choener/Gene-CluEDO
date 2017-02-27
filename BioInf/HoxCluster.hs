@@ -45,8 +45,6 @@ import           ShortestPath.SHP.Edge.MinDist (runMaxEdgeProb, runCoOptDist, bo
 import           ADP.Fusion.Term.Edge.Type (From(..),To(..))
 
 import           BioInf.HoxCluster.EdgeProb (edgeProbScoreMatrix, edgeProbPartFun)
---import           BioInf.HoxCluster.MinDist (runMaxEdgeProb, runCoOptDist, boundaryPartFun)
---import           BioInf.HoxCluster.ScoreMat
 
 
 

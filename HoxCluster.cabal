@@ -44,9 +44,7 @@ library
                , ShortestPathProblems   == 0.0.0.*
   exposed-modules:
     BioInf.HoxCluster
---    BioInf.HoxCluster.MinDist
     BioInf.HoxCluster.EdgeProb
---    BioInf.HoxCluster.ScoreMat
   default-extensions: BangPatterns
                     , FlexibleContexts
                     , GADTs
