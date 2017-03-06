@@ -110,7 +110,6 @@ runHoxCluster fw fs temperature inFile filePrefix = do
     let (Exp maxP, _, maxPcoopts) = runMaxEdgeProbLast probMat
     hPrintf hrun "Maximal Log-Probability Path Score: %6.3f\n" maxP
     forM_ (map reverse maxPcoopts) $ \path -> do
-      print path
       forM_ path $ \case
         BTnode (_:.To n)    -> hPrintf hrun "%s" (lns !! n)
         BTedge (From ff:.To tt) -> hPrintf hrun " -> %s" (lns !! tt)
