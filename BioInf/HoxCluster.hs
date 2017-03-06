@@ -41,7 +41,7 @@ import           Text.Printf
 import           Data.PrimitiveArray (fromEdgeBoundaryFst,(:.)(..))
 import           Data.PrimitiveArray.ScoreMatrix
 import           Diagrams.TwoD.ProbabilityGrid
-import           ShortestPath.SHP.Edge.MinDist (runMaxEdgeProb, runCoOptDist, boundaryPartFun,PathBT(..))
+import           ShortestPath.SHP.Edge.MinDist (runMaxEdgeProbLast, runCoOptDist, boundaryPartFun,PathBT(..))
 import           ADP.Fusion.Term.Edge.Type (From(..),To(..))
 
 import           BioInf.HoxCluster.EdgeProb (edgeProbScoreMatrix, edgeProbPartFun)
@@ -107,12 +107,13 @@ runHoxCluster fw fs temperature inFile filePrefix = do
     --
     hPrintf hrun "\n"
     let probMat = edgeProbScoreMatrix scoreMat eps
-    let (Exp maxP, maxPcoopts) = runMaxEdgeProb probMat
+    let (Exp maxP, _, maxPcoopts) = runMaxEdgeProbLast probMat
     hPrintf hrun "Maximal Log-Probability Path Score: %6.3f\n" maxP
-    forM_ maxPcoopts $ \path -> do
+    forM_ (map reverse maxPcoopts) $ \path -> do
+      print path
       forM_ path $ \case
-        BTnode (_:.To n)    -> hPrintf hrun "%s\n" (lns !! n)
-        BTedge (From ff:._) -> hPrintf hrun "%s -> " (lns !! ff)
+        BTnode (_:.To n)    -> hPrintf hrun "%s" (lns !! n)
+        BTedge (From ff:.To tt) -> hPrintf hrun " -> %s" (lns !! tt)
       hPrintf hrun "\n"
     hPrintf hrun "\n"
 
