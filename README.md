@@ -2,7 +2,24 @@
 
 [*generalized Algebraic Dynamic Programming Homepage*](http://www.bioinf.uni-leipzig.de/Software/gADP/)
 
-# HoxCluster: determine the most likely Hox cluster ordering.
+# HoxCluster: determine the most likely gene cluster ordering.
+
+    Hoener zu Siederdissen, Christian and Prohaska, Sonja J. and Stadler, Peter F.  
+    *Dynamic Programming for Set Data Types*  
+    2014, Lecture Notes in Bioinformatics, 8826,  
+    preprint: http://www.bioinf.uni-leipzig.de/~choener/pdfs/hoe-pro-2014.pdf  
+
+    Hoener zu Siederdissen, Christian and Prohaska, Sonja J. and Stadler, Peter F.  
+    *Algebraic Dynamic Programming over General Data Structures*  
+    2015, BMC Bioinformatics  
+    oa: https://doi.org/10.1186/1471-2105-16-S19-S2  
+
+    Prohaska, Sonja J. and Berkemer, Sarah and Externbrink, Fabian and Gatter, Thomas  
+    and Retzlaff, Nancy and The Students of the Graphs and Biological Networks Lab 2017  
+    and H\"oner zu Siederdissen, Christian and Stadler, Peter F.  
+    *Expansion of Gene Clusters and the Shortest Hamiltonian Path Problem*  
+    2017  
+    preprint: in preparation  
 
 This program accept a matrix with distances between nodes (see below for an
 example). It then proceeds to calculate the Hamiltonian path with the shortest
@@ -22,12 +39,18 @@ in the Hamiltonian path, i.e. either the first or the last node.
 
 [Wikipedia on Hox clusters.](https://en.wikipedia.org/wiki/Hox_cluster)
 
-Hox clusters are a set of genes that are linearly ordered.
+Hox clusters are a set of genes that are linearly ordered. The genes are
+(assumed) to have a single originating gene, and repeated duplication has led
+to the cluster with unknown duplication tree.
+
+The long time scales involved make it hard to produce a tree that can be
+trusted. This program therefore produces summary information in the form of
+edge path probabilities.
 
 ## Example matrix:
 
 In this artificial distance matrix, we have prime numbers as distances between
-nodes.
+nodes. Store the matrix in a file, say ``mat.dat``.
 
 ```
 #   A   B   C   D   E
@@ -37,6 +60,17 @@ C   3  11   0  19  23
 D   5  13  19   0  27
 E   7  17  23  27   0
 ```
+
+Now, run the algorithm ``./HoxCluster -o output.run ./mat.dat``. After the
+program has run, ``output.run`` contains the a wealth of information about the
+input. The maximum likelihood path, the edge weights, end probabilities, and
+maximum expected accuracy path are calculated. Two additional files, here
+``output.boundary.svg``, and ``output.edge.svg`` are produced. The boundary
+plot provides graphical output of the probability that a node (or gene) is the
+start or end node. The edge probability plot provides probabilities for each
+edge (i,j) between nodes. This shows the most likely neighbors, and therefore
+genetic relationship, over all possible gene orders.
+
 
 
 #### Contact

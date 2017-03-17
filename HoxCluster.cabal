@@ -14,7 +14,7 @@ cabal-version:  >= 1.10.0
 tested-with:    GHC == 7.8.4, GHC == 7.10.3, GHC == 8.0.1
 synopsis:       Hox gene clustering
 description:
-                Determine the most likely order of genes in a Hox cluster.
+                Determine the most likely order of genes in a gene cluster.
                 .
                 Apart from being an interesting problem in computational
                 biology, it also serves as an example problem for dynamic
