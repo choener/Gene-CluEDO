@@ -2,19 +2,19 @@
 
 [*generalized Algebraic Dynamic Programming Homepage*](http://www.bioinf.uni-leipzig.de/Software/gADP/)
 
-# Gene-CluEDO: determine the most likely gene cluster ordering.
+# Gene-CluEDO: Gene Cluster Evolution Determined Order
 
-    Hoener zu Siederdissen, Christian and Prohaska, Sonja J. and Stadler, Peter F.  
+1.  Hoener zu Siederdissen, Christian and Prohaska, Sonja J. and Stadler, Peter F.  
     *Dynamic Programming for Set Data Types*  
     2014, Lecture Notes in Bioinformatics, 8826,  
     preprint: http://www.bioinf.uni-leipzig.de/~choener/pdfs/hoe-pro-2014.pdf  
 
-    Hoener zu Siederdissen, Christian and Prohaska, Sonja J. and Stadler, Peter F.  
+1.  Hoener zu Siederdissen, Christian and Prohaska, Sonja J. and Stadler, Peter F.  
     *Algebraic Dynamic Programming over General Data Structures*  
     2015, BMC Bioinformatics  
     oa: https://doi.org/10.1186/1471-2105-16-S19-S2  
 
-    Prohaska, Sonja J. and Berkemer, Sarah and Externbrink, Fabian and Gatter, Thomas  
+1.  Prohaska, Sonja J. and Berkemer, Sarah and Externbrink, Fabian and Gatter, Thomas  
     and Retzlaff, Nancy and The Students of the Graphs and Biological Networks Lab 2017  
     and H\"oner zu Siederdissen, Christian and Stadler, Peter F.  
     *Expansion of Gene Clusters and the Shortest Hamiltonian Path Problem*  
