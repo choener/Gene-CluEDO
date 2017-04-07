@@ -16,7 +16,7 @@
 
 1.  Prohaska, Sonja J. and Berkemer, Sarah and Externbrink, Fabian and Gatter, Thomas  
     and Retzlaff, Nancy and The Students of the Graphs and Biological Networks Lab 2017  
-    and H\"oner zu Siederdissen, Christian and Stadler, Peter F.  
+    and Hoener zu Siederdissen, Christian and Stadler, Peter F.  
     *Expansion of Gene Clusters and the Shortest Hamiltonian Path Problem*  
     2017  
     preprint: http://www.bioinf.uni-leipzig.de/~choener/pdfs/pro-ber-2017.pdf  
