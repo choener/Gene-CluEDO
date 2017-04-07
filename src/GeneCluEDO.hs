@@ -1,10 +1,13 @@
 
 module Main where
 
+import Data.Version (showVersion)
 import System.Console.CmdArgs
 import System.FilePath
 
-import BioInf.HoxCluster
+import BioInf.GeneCluEDO
+
+import Paths_Gene_CluEDO (version)
 
 
 
@@ -25,9 +28,14 @@ oOptions = Options
   , fillstyle   = FSfull  &= help "shading of boxes: fsopacitylog (log-scaled), fsopacitylinear (linear scaled), fsfull (always fully opaque)"
   }
 
+allOptions = oOptions
+  &= program "GeneCluEDO"
+  &= summary ("GeneCluEDO " ++ showVersion version ++ " (c) Christian Höner zu Siederdissen 2017, choener@bioinf.uni-leipzig.de")
+  &= verbosity
+
 main :: IO ()
 main = do
-  Options{..} <- cmdArgs oOptions
+  Options{..} <- cmdArgs allOptions
   let filePrefix = maybe (takeBaseName infile) id outprefix
-  runHoxCluster fillweight fillstyle temperature infile filePrefix
+  runGeneCluEDO fillweight fillstyle temperature infile filePrefix
 

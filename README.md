@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.org/choener/HoxCluster.svg?branch=master)](https://travis-ci.org/choener/HoxCluster)
+[![Build Status](https://travis-ci.org/choener/Gene-CluEDO.svg?branch=master)](https://travis-ci.org/choener/Gene-CluEDO)
 
 [*generalized Algebraic Dynamic Programming Homepage*](http://www.bioinf.uni-leipzig.de/Software/gADP/)
 
-# HoxCluster: determine the most likely gene cluster ordering.
+# Gene-CluEDO: determine the most likely gene cluster ordering.
 
     Hoener zu Siederdissen, Christian and Prohaska, Sonja J. and Stadler, Peter F.  
     *Dynamic Programming for Set Data Types*  
@@ -19,9 +19,9 @@
     and H\"oner zu Siederdissen, Christian and Stadler, Peter F.  
     *Expansion of Gene Clusters and the Shortest Hamiltonian Path Problem*  
     2017  
-    preprint: in preparation  
+    preprint: http://www.bioinf.uni-leipzig.de/~choener/pdfs/pro-ber-2017.pdf  
 
-This program accept a matrix with distances between nodes (see below for an
+This program accepts a matrix with distances between nodes (see below for an
 example). It then proceeds to calculate the Hamiltonian path with the shortest
 distance between each pair of nodes, where the path has to travel from the
 start, then to all other nodes, finally stopping at the last node.
@@ -61,7 +61,7 @@ D   5  13  19   0  27
 E   7  17  23  27   0
 ```
 
-Now, run the algorithm ``./HoxCluster -o output.run ./mat.dat``. After the
+Now, run the algorithm ``./GeneCluEDO -o output.run ./mat.dat``. After the
 program has run, ``output.run`` contains the a wealth of information about the
 input. The maximum likelihood path, the edge weights, end probabilities, and
 maximum expected accuracy path are calculated. Two additional files, here

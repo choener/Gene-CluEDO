@@ -1,5 +1,5 @@
 
--- | Run all steps of the HoxCluster algorithms in order.
+-- | Run all steps of the GeneCluEDO algorithms in order.
 --
 -- This will produce the following:
 -- 
@@ -22,8 +22,8 @@
 -- TODO All this should be wrapped and available as a function. not just
 -- providing output files.
 
-module BioInf.HoxCluster
-  ( runHoxCluster
+module BioInf.GeneCluEDO
+  ( runGeneCluEDO
   , FillWeight (..)
   , FillStyle (..)
   ) where
@@ -38,17 +38,17 @@ import           System.FilePath (addExtension)
 import           System.IO (withFile,IOMode(WriteMode))
 import           Text.Printf
 
+import           ADP.Fusion.Term.Edge.Type (From(..),To(..))
 import           Data.PrimitiveArray (fromEdgeBoundaryFst,(:.)(..))
 import           Data.PrimitiveArray.ScoreMatrix
 import           Diagrams.TwoD.ProbabilityGrid
 import           ShortestPath.SHP.Edge.MinDist (runMaxEdgeProbLast, runCoOptDist, boundaryPartFun,PathBT(..))
-import           ADP.Fusion.Term.Edge.Type (From(..),To(..))
 
-import           BioInf.HoxCluster.EdgeProb (edgeProbScoreMatrix, edgeProbPartFun)
-
+import           BioInf.GeneCluEDO.EdgeProb (edgeProbScoreMatrix, edgeProbPartFun)
 
 
-runHoxCluster
+
+runGeneCluEDO
   :: FillWeight
   -> FillStyle
   -> Double
@@ -59,7 +59,7 @@ runHoxCluster
   -> String
   -- ^ In the current directory, create output files with this name prefix
   -> IO ()
-runHoxCluster fw fs temperature inFile filePrefix = do
+runGeneCluEDO fw fs temperature inFile filePrefix = do
   scoreMat <- fromFile inFile
   let lon = listOfRowNames scoreMat
   let n = length lon

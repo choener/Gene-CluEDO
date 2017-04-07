@@ -1,5 +1,5 @@
 
-module BioInf.HoxCluster.EdgeProb where
+module BioInf.GeneCluEDO.EdgeProb where
 
 import           Control.Arrow (second)
 import           Control.Monad (forM_)
@@ -7,21 +7,19 @@ import           Data.List (nub,sort)
 import           Data.Text (Text,unpack)
 import           Data.Vector.Unboxed (Unbox)
 import           Numeric.Log
+import qualified Data.Map.Strict as MS
 import qualified Data.Text as T
 import qualified Data.Vector.Fusion.Stream.Monadic as SM
 import           Text.Printf
-import qualified Data.Map.Strict as MS
 
 import           ADP.Fusion.Core
 import           ADP.Fusion.EdgeBoundary
 import           ADP.Fusion.Set1
 import           Data.PrimitiveArray hiding (toList)
+import           Data.PrimitiveArray.ScoreMatrix
 import           Diagrams.TwoD.ProbabilityGrid
 import           FormalLanguage
 import           ShortestPath.SHP.Grammar.EdgeProb
-import           Data.PrimitiveArray.ScoreMatrix
-
---import           BioInf.HoxCluster.ScoreMat
 
 
 
@@ -118,16 +116,12 @@ edgeProbScoreMatrix (ScoreMatrix mat _ zn sn) xs' = ScoreMatrix m endProbs zn sn
         bP = MS.fromListWith (+) [ (t,p) | (f :-> t, p) <- xs' ]
         beginProbs = fromAssocs 0 n 1 [ (k, 1 - eP MS.! k) | k <- [0..n] ] `asTypeOf` endProbs
 
+{-
 test t fp = do
   sMat <- fromFile fp
   let n = numRows sMat
   let lns = fmap unpack $ listOfRowNames sMat
---  let (d,bt) = runCoOptDist sMat
   let ps = edgeProbPartFun t sMat
---  print d
---  mapM_ print $ bt
---  print $ length bt
---  print $ length $ nub $ sort bt
   forM_ ps $ \(b :-> _,_) -> printf "%5s  " (sMat `rowNameOf` b)
   putStrLn ""
   forM_ ps $ \(_ :-> b,_) -> printf "%5s  " (sMat `rowNameOf` b)
@@ -145,4 +139,5 @@ test t fp = do
   print $ length ps
   print ps
   svgGridFile "test.svg" FWfill FSopacityLinear n n lns lns (Prelude.map snd ps)
+-}
 
