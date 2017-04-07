@@ -6,7 +6,7 @@ homepage:       https://github.com/choener/Gene-CluEDO
 bug-reports:    https://github.com/choener/Gene-CluEDO/issues
 maintainer:     choener@bioinf.uni-leipzig.de
 category:       Bioinformatics
-license:        BSD3
+license:        GPL-3
 license-file:   LICENSE
 build-type:     Simple
 stability:      experimental
