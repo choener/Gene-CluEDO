@@ -35,6 +35,23 @@ while ``1`` denotes that they almost surely are.
 Finally, we calculate the probability that a node is one of the terminal nodes
 in the Hamiltonian path, i.e. either the first or the last node.
 
+
+## Installation / Pre-compiled Binaries
+
+- Binaries are available from github for Linux x86-64. They can be downloaded
+  here: <https://github.com/choener/Gene-CluEDO/releases>
+- Installation from sources is possible using the Haskell stack tool, as
+  described at the bottom of this page:
+  <http://www.bioinf.uni-leipzig.de/~choener/software/Gene-CluEDO.html>
+- Another installation option is via ``cabal new-install`` (preferred for
+  development, but more involved to setup)
+
+
+## Input data used for the *Expansion of Gene Clusters* paper
+
+The data sets are available together with the sources or the binary release.
+
+
 ## The Biological Problem We Solve
 
 [Wikipedia on Hox clusters.](https://en.wikipedia.org/wiki/Hox_cluster)
@@ -46,6 +63,7 @@ to the cluster with unknown duplication tree.
 The long time scales involved make it hard to produce a tree that can be
 trusted. This program therefore produces summary information in the form of
 edge path probabilities.
+
 
 ## Example matrix:
 

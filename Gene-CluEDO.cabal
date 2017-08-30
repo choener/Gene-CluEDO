@@ -21,6 +21,8 @@ description:
                 Apart from being an interesting problem in computational
                 biology, it also serves as an example problem for dynamic
                 programming over unordered sets with interfaces.
+                .
+                Binaries available from github: <https://github.com/choener/Gene-CluEDO/releases>
 
 
 
