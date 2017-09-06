@@ -29,6 +29,8 @@ description:
 Extra-Source-Files:
   README.md
   changelog.md
+  data/*dis
+  data/run-all.sh
 
 
 
