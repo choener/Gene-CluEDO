@@ -73,24 +73,4 @@ script:
  - cabal new-build -w ${HC} ${TEST} ${BENCH} all
  - if [ "x$TEST" = "x--enable-tests" ]; then cabal new-test -w ${HC} ${TEST} all; fi
 
-# This is all part of the deployment process
-- echo ${HC}
-- pwd
-- ls -alh
-- find dist-newstyle -executable -type f
-- $TRAVIS_BUILD_DIR/.travis/prepare-release.sh
-deploy:
-  provider: releases
-  file_glob: true
-  file: "build/*.tgz"
-  skip_cleanup: true
-  overwrite: true
-  on:
-    branch: master
-    tags: true
-    condition: "$HC = ghc-8.0.2"
-  api_key:
-    secure: "qw1Q/NxgzT936UEKqASI9rL8TGSFp4z2WaKMTj2gx7H51JCE/ZfBDYCG0VG/CjcwQKTwxdqUa2EnN+OhdxrH6S6jbMlTU7rn02EaeX3unLDTLK1+hC2Kg35Lsamc7vxmEWx5EA3w88IFgVeqzNwrO1XorBPub0rX4LW41rKmBOkDKoK/SlwzEs83V+m5spzqa9rTmzB/wB2SY/qBPHUdlamuOOXTRJHUjO0EnjKapv0JnUQ+bspkL+HmXR73WjenfFuX7DGQV2jxHbx1VaBT1Nuj/SxCgWFAZof+wwV5zl+9FnJDCsYpHGnoppVXuF3NPZMwbURWBLU2R8t/HqmfKGeZMe6vzi0KbWrpfFvoVDxjSaOnn24xoE9dIP/Lts8Hbc40jvcFK9HeT8G6yB5SJRI0XfyvziIfdsUeiWyJabsOICMyybfIau4MdEbCa4LdHxm+aZWjBmjs6Il66JUwc89QeyCF7zEkbSWBg97hwo2kGHc0WR/zh+YDD49hZu+rkjlJbH/cPAHGzOUu6xCi6xhNCRWdxcry946/CvOZA2UrPbtg6DvGP9Ri7FNtSm3hGzmpTu6BV+roerrr2sPxtiCYb+2Wo8TZF6x7uHHRrTjJp6KnxCkxnJV/Y6KD7AuFthj2vme2BRfrW0hR2WVJvcAPs9Z9u02uOKs6UJaFft8="
-
 # EOF
-
