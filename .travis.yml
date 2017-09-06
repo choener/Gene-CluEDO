@@ -73,4 +73,11 @@ script:
  - cabal new-build -w ${HC} ${TEST} ${BENCH} all
  - if [ "x$TEST" = "x--enable-tests" ]; then cabal new-test -w ${HC} ${TEST} all; fi
 
+# This is all part of the deployment process
+- echo ${HC}
+- pwd
+- ls -alh
+- find dist-newstyle -executable -type f
+- $TRAVIS_BUILD_DIR/.travis/prepare-release.sh
+
 # EOF
