@@ -4,15 +4,8 @@
 
 # Gene-CluEDO: Gene Cluster Evolution Determined Order
 
-1.  Hoener zu Siederdissen, Christian and Prohaska, Sonja J. and Stadler, Peter F.  
-    *Dynamic Programming for Set Data Types*  
-    2014, Lecture Notes in Bioinformatics, 8826,  
-    preprint: http://www.bioinf.uni-leipzig.de/~choener/pdfs/hoe-pro-2014.pdf  
-
-1.  Hoener zu Siederdissen, Christian and Prohaska, Sonja J. and Stadler, Peter F.  
-    *Algebraic Dynamic Programming over General Data Structures*  
-    2015, BMC Bioinformatics  
-    oa: https://doi.org/10.1186/1471-2105-16-S19-S2  
+The first paper describes the biological problem. The 2nd and 3rd paper provide
+algorithmic background.
 
 1.  Prohaska, Sonja J. and Berkemer, Sarah and Externbrink, Fabian and Gatter, Thomas  
     and Retzlaff, Nancy and The Students of the Graphs and Biological Networks Lab 2017  
@@ -20,6 +13,16 @@
     *Expansion of Gene Clusters and the Shortest Hamiltonian Path Problem*  
     2017  
     preprint: http://www.bioinf.uni-leipzig.de/~choener/pdfs/pro-ber-2017.pdf  
+
+1.  Hoener zu Siederdissen, Christian and Prohaska, Sonja J. and Stadler, Peter F.  
+    *Algebraic Dynamic Programming over General Data Structures*  
+    2015, BMC Bioinformatics  
+    oa: https://doi.org/10.1186/1471-2105-16-S19-S2  
+
+1.  Hoener zu Siederdissen, Christian and Prohaska, Sonja J. and Stadler, Peter F.  
+    *Dynamic Programming for Set Data Types*  
+    2014, Lecture Notes in Bioinformatics, 8826,  
+    preprint: http://www.bioinf.uni-leipzig.de/~choener/pdfs/hoe-pro-2014.pdf  
 
 This program accepts a matrix with distances between nodes (see below for an
 example). It then proceeds to calculate the Hamiltonian path with the shortest
@@ -50,6 +53,7 @@ in the Hamiltonian path, i.e. either the first or the last node.
 ## Input data used for the *Expansion of Gene Clusters* paper
 
 The data sets are available together with the sources or the binary release.
+Check the ``data`` folder. The ``run-all.sh`` script runs the four examples.
 
 
 ## The Biological Problem We Solve

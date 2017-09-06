@@ -1,5 +1,5 @@
 name:           Gene-CluEDO
-version:        0.0.0.1
+version:        0.0.0.2
 author:         Christian Hoener zu Siederdissen, 2017
 copyright:      Christian Hoener zu Siederdissen, 2017
 homepage:       https://github.com/choener/Gene-CluEDO
@@ -15,6 +15,8 @@ tested-with:    GHC == 8.0.2
 synopsis:       Hox gene clustering
 description:
                 Gene Cluster Evolution Determined Order
+                .
+                *Expansion of Gene Clusters and the Shortest Hamiltonian Path Problem*, Prohaska et al, 2017
                 .
                 Calculate the most likely order of genes in a gene cluster.
                 .
@@ -122,4 +124,9 @@ test-suite properties
 source-repository head
   type: git
   location: git://github.com/choener/Gene-CluEDO
+
+source-repository this
+  type: git
+  location: git://github.com/choener/Gene-CluEDO/tree/0.0.0.2
+  tag: 0.0.0.2
 
